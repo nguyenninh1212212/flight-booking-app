@@ -1,0 +1,43 @@
+# --- OS & IDE ---
+.DS_Store
+.vscode/
+.idea/
+*.swp
+*.thumbs.db
+
+# --- Node.js (Frontend & Backend) ---
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+dist/
+build/
+
+# --- Java (Spring Boot) ---
+target/
+!.mvn/wrapper/maven-wrapper.jar
+*.class
+*.jar
+*.war
+*.ear
+*.log
+.factorypath
+.project
+.settings/
+.classpath
+
+# --- Docker ---
+.docker/
+# Nếu bạn lưu dữ liệu DB ra ngoài volume máy ảo
+postgres-data/
+mongo-data/
+redis-data/
+
+# --- Temporary files ---
+tmp/
+temp/
