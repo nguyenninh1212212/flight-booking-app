@@ -1,9 +1,9 @@
-const AppError = require("./appError");
+import AppError from "./appError";
 
 class ForbiddenError extends AppError {
   constructor(message = "Forbidden") {
-    super(message, 403);
+    super(message, 403, "FORBIDDEN");
   }
 }
 
-module.exports = ForbiddenError;
+export default ForbiddenError;

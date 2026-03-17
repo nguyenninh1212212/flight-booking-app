@@ -1,9 +1,9 @@
-const AppError = require("./appError");
+import AppError from "./appError";
 
 class NotFoundError extends AppError {
   constructor(message = "Resource not found") {
-    super(message, 404);
+    super(message, 404, "NOT_FOUND");
   }
 }
 
-module.exports = NotFoundError;
+export default NotFoundError;

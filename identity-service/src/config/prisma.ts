@@ -1,5 +1,5 @@
-const { PrismaClient } = require("@prisma/client");
-const dotenv = require("dotenv");
+import { PrismaClient } from "@prisma/client";
+import dotenv from "dotenv";
 
 dotenv.config();
 
@@ -10,4 +10,4 @@ prisma
   .then(() => console.log("✅ Prisma 7 connected to PostgreSQL"))
   .catch((err: any) => console.error("❌ Prisma connection error:", err));
 
-module.exports = prisma;
+export default prisma;

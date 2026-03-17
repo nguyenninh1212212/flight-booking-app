@@ -1,8 +1,8 @@
 // Sử dụng require kết hợp với kiểu dữ liệu của TS
-const express = require('express');
-import type { Request, Response } from 'express';
-const dotenv = require('dotenv');
-const cors = require('cors');
+import express from "express";
+import type { Request, Response } from "express";
+import dotenv from "dotenv";
+import cors from "cors";
 
 dotenv.config();
 
@@ -12,10 +12,10 @@ const PORT = process.env.PORT || 5000;
 app.use(cors());
 app.use(express.json());
 
-app.get('/', (req: Request, res: Response): void => {
-    res.send('Identity Service is running with CommonJS and TypeScript!');
+app.get("/", (req: Request, res: Response): void => {
+  res.send("Identity Service is running with CommonJS and TypeScript!");
 });
 
 app.listen(PORT, () => {
-    console.log(`[server]: Server is running at http://localhost:${PORT}`);
+  console.log(`[server]: Server is running at http://localhost:${PORT}`);
 });

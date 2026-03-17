@@ -1,20 +1,28 @@
-function success(res :any, data = null, message = "Success", code = "SUCCESS", status = 200) {
+const success = (
+  res: any,
+  data: any = null,
+  message = "Success",
+  code = "SUCCESS",
+  status = 200,
+) => {
   return res.status(status).json({
     code,
     message,
-    data
+    data,
   });
-}
-
-function error(res : any, message = "Internal error", code = "INTERNAL_ERROR", status = 500) {
-  return res.status(status).json({
-    code,
-    message,
-    data: null
-  });
-}
-
-module.exports = {
-  success,
-  error
 };
+
+const error = (
+  res: any,
+  message = "Internal error",
+  code = "INTERNAL_ERROR",
+  status = 500,
+) => {
+  return res.status(status).json({
+    code,
+    message,
+    data: null,
+  });
+};
+
+export { success, error };
