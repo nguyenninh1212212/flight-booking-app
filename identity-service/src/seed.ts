@@ -22,12 +22,12 @@ const accountSeed = async () => {
     {
       email: "admin@gmail.com",
       password: "123456",
-      role: "ADMIN",
+      roles: ["ADMIN"],
     },
     {
       email: "user@gmail.com",
       password: "123456",
-      role: "USER",
+      roles: ["USER"],
     },
   ];
 
@@ -41,8 +41,12 @@ const accountSeed = async () => {
         email: account.email,
         password: hashedPassword,
 
-        role: {
-          connect: { name: account.role }, // ✅ giờ đúng
+        userRoles: {
+          create: account.roles.map((roleName) => ({
+            role: {
+              connect: { name: roleName },
+            },
+          })),
         },
       },
     });

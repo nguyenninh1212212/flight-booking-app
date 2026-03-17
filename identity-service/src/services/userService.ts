@@ -5,12 +5,15 @@ import UnauthorizedError from "../error/unauthorizedError";
 import NotFoundError from "../error/notFound";
 import roleService from "./roleService";
 import tokenService from "./tokenService";
+import sessionRepo from "../repo/sessionRepo";
 
 import type {
   ILoginRequest,
   IRegisterRequest,
   IAuthResponse,
+  IDatasRes,
   IRole,
+  IUser,
 } from "../interfaces/identityType";
 
 const userService = {
@@ -22,17 +25,32 @@ const userService = {
     }
 
     const isPasswordValid = await bcrypt.compare(data.password, user.password);
-
     if (!isPasswordValid) {
+      // 🔥 tăng số lần sai
       throw new UnauthorizedError("Invalid credentials");
     }
 
-    const role = await userRepo.getRole(user.id);
+    // 🔥 reset attempts khi login thành công
 
-    const accessToken = tokenService.generateAccessToken(user.id, [role.name]);
-    const refreshToken = tokenService.generateRefreshToken(user.id, [
-      role.name,
-    ]);
+    // 🔥 lấy roles
+    const roles = await userRepo.getRoles(user.id);
+    const roleNames = roles.map((r) => r.name.toUpperCase());
+
+    // 🔥 tạo token
+    const accessToken = tokenService.generateAccessToken(user.id, roleNames);
+
+    const refreshToken = tokenService.generateRefreshToken(user.id, roleNames);
+
+    const sessionCount = await sessionRepo.countByUser(user.id);
+
+    if (sessionCount >= 3) {
+      await sessionRepo.deleteOldest(user.id);
+    }
+
+    await sessionRepo.create({
+      userId: user.id,
+      token: refreshToken,
+    });
 
     return {
       accessToken,
@@ -59,6 +77,58 @@ const userService = {
       },
       role.id,
     );
+  },
+  refreshToken: async (
+    refreshToken: string,
+  ): Promise<{ accessToken: string }> => {
+    const payload = tokenService.verifyRefreshToken(refreshToken);
+    if (!payload) {
+      await sessionRepo.invalidateToken(refreshToken);
+      throw new UnauthorizedError("Invalid refresh token");
+    }
+    const accessToken = tokenService.generateAccessToken(
+      payload.sub,
+      payload.roles,
+    );
+    return { accessToken };
+  },
+  logout: async (refreshToken: string): Promise<void> => {
+    tokenService.invalidateRefreshToken(refreshToken);
+  },
+  changePassword: async (
+    userId: string,
+    password: string,
+    newPassword: string,
+  ): Promise<void> => {
+    const user = await userRepo.findById(userId);
+
+    if (!user) {
+      throw new NotFoundError("User not found");
+    }
+    const isPasswordValid = await bcrypt.compare(password, user.password);
+    if (!isPasswordValid) {
+      throw new UnauthorizedError("Invalid current password");
+    }
+    const hashedPassword = await bcrypt.hash(newPassword, 10);
+    await userRepo.updatePassword(userId, hashedPassword);
+  },
+  getAllUsers: async (page: number = 1): Promise<IDatasRes> => {
+    const [total, data]: [number, IUser[]] = await Promise.all([
+      userRepo.getCount(),
+      userRepo.findAll(page),
+    ]);
+    return {
+      page,
+      total,
+      data,
+    };
+  },
+  getUserById: async (id: string) => {
+    const user = await userRepo.findById(id);
+    if (!user) {
+      throw new NotFoundError("User not found");
+    }
+    return user;
   },
 };
 

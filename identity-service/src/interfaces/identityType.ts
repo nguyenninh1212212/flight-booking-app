@@ -1,9 +1,22 @@
+export interface IDatasRes {
+  page: number;
+  total: number;
+  data: any[];
+}
+
 export interface IUser {
   id: string;
   email: string;
   password: string;
   createdAt: Date;
   updatedAt: Date;
+}
+export interface IUserRes {
+  id: string;
+  email: string;
+  createdAt: Date;
+  updatedAt: Date;
+  roles: string[];
 }
 
 export interface IAuthResponse {
@@ -33,6 +46,11 @@ export interface IUpdatePasswordRequest {
 export interface IRole {
   id: number;
   name: string;
+}
+
+export interface ISession {
+  userId: string;
+  token: string;
 }
 
 export interface IAuthService {

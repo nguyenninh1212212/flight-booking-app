@@ -1,16 +1,21 @@
+import { count } from "node:console";
 import prisma from "../config/prisma";
 
 const roleRepo = {
-  findById: async (id: string) => {
-    return await prisma.role.findById({
+  findById: async (id: number) => {
+    return await prisma.role.findUnique({
       where: {
         id: id,
       },
     });
   },
 
-  findAll: async () => {
-    return await prisma.role.findMany();
+  findAll: async (page: number) => {
+    const limit = 10;
+    return await prisma.role.findMany({
+      skip: (page - 1) * limit,
+      take: limit,
+    });
   },
   findByName: async (name: string) => {
     return await prisma.role.findUnique({
@@ -35,6 +40,17 @@ const roleRepo = {
         name: name,
       },
     });
+  },
+
+  destroy: async (id: number) => {
+    return await prisma.role.delete({
+      where: {
+        id: id,
+      },
+    });
+  },
+  count: async (): Promise<number> => {
+    return await prisma.role.count();
   },
 };
 

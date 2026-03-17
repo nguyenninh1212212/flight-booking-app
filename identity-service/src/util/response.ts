@@ -1,5 +1,7 @@
+import { Response, Request } from "express";
+
 const success = (
-  res: any,
+  res: Response,
   data: any = null,
   message = "Success",
   code = "SUCCESS",
@@ -13,7 +15,7 @@ const success = (
 };
 
 const error = (
-  res: any,
+  res: Response,
   message = "Internal error",
   code = "INTERNAL_ERROR",
   status = 500,
