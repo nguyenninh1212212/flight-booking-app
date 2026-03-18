@@ -1,4 +1,5 @@
 import userService from "../services/userService";
+import tokenService from "../services/tokenService";
 import { success, error } from "../util/response";
 import { Response, Request } from "express";
 
@@ -60,7 +61,7 @@ const userController = {
   },
   changePassword: async (req: any, res: Response, next: any) => {
     try {
-      const userId = req.user.sub.id;
+      const userId = req.user.sub;
       const { oldPassword, newPassword } = req.body;
       await userService.changePassword(userId, oldPassword, newPassword);
       success(res, null, "Password changed successfully", "PASSWORD_CHANGED");
@@ -86,6 +87,29 @@ const userController = {
       success(res, user, "User retrieved successfully", "USER_RETRIEVED");
     } catch (err: any) {
       next(err);
+    }
+  },
+  oauth2Callback: async (req: any, res: any, next: any) => {
+    try {
+      const user = req.user;
+
+      if (!user) {
+        return res.status(401).json({ message: "Unauthorized" });
+      }
+
+      const accessToken = tokenService.generateAccessToken(user.id, user.roles);
+      const refreshToken = tokenService.generateRefreshToken(
+        user.id,
+        user.roles,
+      );
+      success(
+        res,
+        { accessToken, refreshToken },
+        "User logged google in successfully",
+        "USER_LOGGED_IN",
+      );
+    } catch (error) {
+      next(error);
     }
   },
 };

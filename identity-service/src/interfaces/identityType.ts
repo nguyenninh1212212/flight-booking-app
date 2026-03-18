@@ -26,7 +26,7 @@ export interface IAuthResponse {
 
 export interface IRegisterRequest {
   email: string;
-  password: string;
+  password: string | null;
 }
 
 export interface ILoginRequest {

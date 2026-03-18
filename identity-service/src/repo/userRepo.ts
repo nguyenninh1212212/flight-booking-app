@@ -56,6 +56,9 @@ const userRepo = {
   },
 
   create: async (user: IRegisterRequest, role: number): Promise<IUser> => {
+    if (!user.password) {
+      throw new Error("Password is required");
+    }
     return await prisma.user.create({
       data: {
         email: user.email,

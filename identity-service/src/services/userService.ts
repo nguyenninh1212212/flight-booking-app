@@ -14,6 +14,7 @@ import type {
   IDatasRes,
   IRole,
   IUser,
+  IUserRes,
 } from "../interfaces/identityType";
 
 const userService = {
@@ -65,6 +66,10 @@ const userService = {
       throw new ForbiddenError("Email already in use");
     }
 
+    if(!data.password) {
+      throw new Error("Password is required");
+    }
+
     const [role, hashedPassword]: [IRole, string] = await Promise.all([
       roleService.getDefaultRole(),
       bcrypt.hash(data.password, 10),
@@ -113,7 +118,7 @@ const userService = {
     await userRepo.updatePassword(userId, hashedPassword);
   },
   getAllUsers: async (page: number = 1): Promise<IDatasRes> => {
-    const [total, data]: [number, IUser[]] = await Promise.all([
+    const [total, data]: [number, IUserRes[]] = await Promise.all([
       userRepo.getCount(),
       userRepo.findAll(page),
     ]);
